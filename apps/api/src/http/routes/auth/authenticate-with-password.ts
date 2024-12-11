@@ -19,7 +19,9 @@ export async function authenticateWithPassword(app: FastifyInstance) {
           password: z.string(),
         }),
         response: {
-          201: z.object({ token: z.string() }),
+          201: z.object({
+            token: z.string(),
+          }),
         },
       },
     },
@@ -33,22 +35,22 @@ export async function authenticateWithPassword(app: FastifyInstance) {
       })
 
       if (!userFromEmail) {
-        throw new BadRequestError('Invalid credentials')
+        throw new BadRequestError('Invalid Credentials')
       }
 
-      if (userFromEmail?.passwordHash === null) {
+      if (userFromEmail.passwordHash === null) {
         throw new BadRequestError(
-          'User does not have a password, use a social login'
+          'User does not have a password, use social login',
         )
       }
 
       const isPasswordValid = await compare(
         password,
-        userFromEmail.passwordHash
+        userFromEmail.passwordHash,
       )
 
       if (!isPasswordValid) {
-        throw new BadRequestError('Invalid credentials')
+        throw new BadRequestError('Invalid Credentials')
       }
 
       const token = await reply.jwtSign(
@@ -59,10 +61,10 @@ export async function authenticateWithPassword(app: FastifyInstance) {
           sign: {
             expiresIn: '7d',
           },
-        }
+        },
       )
 
       return reply.status(201).send({ token })
-    }
+    },
   )
 }

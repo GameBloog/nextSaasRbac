@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
+import z from 'zod'
 
 import { prisma } from '@/lib/prisma'
 
@@ -9,8 +9,8 @@ export async function requestPasswordRecover(app: FastifyInstance) {
     '/password/recover',
     {
       schema: {
-        tags: ['Auth'],
-        summary: 'Get authenticated user profile',
+        tags: ['auth'],
+        summary: 'Get authenticate user profile',
         body: z.object({
           email: z.string().email(),
         }),
@@ -23,11 +23,13 @@ export async function requestPasswordRecover(app: FastifyInstance) {
       const { email } = request.body
 
       const userFromEmail = await prisma.user.findUnique({
-        where: { email },
+        where: {
+          email,
+        },
       })
 
       if (!userFromEmail) {
-        // We don't want to people to know if the user really exists
+        // we don't want people know if user really exists
         return reply.status(201).send()
       }
 
@@ -40,7 +42,7 @@ export async function requestPasswordRecover(app: FastifyInstance) {
 
       // Send e-mail with password recover link
 
-      console.log('Password recover token:', code)
+      console.log('Recover password token', code)
 
       return reply.status(201).send()
     },

@@ -48,7 +48,7 @@ export async function getProfile(app: FastifyInstance) {
           throw new BadRequestError('User not found')
         }
 
-        return reply.status(200).send({ user })
-      }
+        return reply.send({ user })
+      },
     )
 }
