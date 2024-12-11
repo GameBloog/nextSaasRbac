@@ -41,7 +41,7 @@ model Token {
 }
 
 enum AccountProvider {
-  GITUB
+  GITHUB
 }
 
 model Account {
